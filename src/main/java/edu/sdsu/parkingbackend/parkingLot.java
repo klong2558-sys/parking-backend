@@ -12,24 +12,33 @@ public class parkingLot {
     protected String currentStatus;
     protected String lastUpdated;
     protected int capacity;
+    protected int occupiedSpaces;
 
-    public void updateStatus(String newStatus) {
-        if (newStatus == null || (!newStatus.equals("Full") && !newStatus.equals("Not Full"))) {
-            System.out.println(" Invalid status. Please enter 'Full' or 'Not Full'.");
-            return;
+    public boolean updateStatus(int newOccupied) {
+        if (newOccupied < 0 || newOccupied > capacity) {
+            System.out.println("Invalid number. Must be between 0 and " + capacity + ".");
+            return false;
         }
 
-        currentStatus = newStatus.toUpperCase();  // Simpler & consistent
-        lastUpdated = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        occupiedSpaces = newOccupied;
 
-        System.out.println("Status updated: " + lotName + " is now " + currentStatus);
-        System.out.println("Last updated: " + lastUpdated);
+        // Determine current status
+        if (occupiedSpaces == capacity) {
+            currentStatus = "FULL";
+        } else {
+            currentStatus = "NOT FULL";
+        }
+
+        // Record time
+        lastUpdated = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return true;
     }
 
     public String getStatus() {
         System.out.println(lotName + " is now " + currentStatus );
         return currentStatus;
     }
+
 
 
 
