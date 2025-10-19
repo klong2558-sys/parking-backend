@@ -4,11 +4,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 
-public class parkingLot {
+public class ParkingLot {
 
     protected int lotID;
     protected String lotName;
-    protected float lotLocation;
     protected String currentStatus;
     protected String lastUpdated;
     protected int capacity;
@@ -38,9 +37,6 @@ public class parkingLot {
         System.out.println(lotName + " is now " + currentStatus );
         return currentStatus;
     }
-
-
-
 
 
 }
