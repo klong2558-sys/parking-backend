@@ -33,6 +33,10 @@ public class ParkingLot {
         return true;
     }
 
+    public void getLot(int lotID) {
+        this.lotID = lotID;
+    }
+
     public String getStatus() {
         System.out.println(lotName + " is now " + currentStatus );
         return currentStatus;

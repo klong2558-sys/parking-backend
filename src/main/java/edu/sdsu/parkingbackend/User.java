@@ -28,6 +28,10 @@ public abstract class User {
         }
     }
 
+    float getUserID(float userID) {
+        return this.userID;
+    }
+
     void logout() {
 
         if (isLoggedIn) {
