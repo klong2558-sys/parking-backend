@@ -69,7 +69,22 @@ public class Admin extends User {
                 return false;
         }
     }
+
+    public BusiestReport generateBusiestReport(int topN) {
+        if (!isLoggedIn()) {
+            log.warn("Admin {} attempted to generate report without login.", adminID);
+            return new BusiestReport(java.util.List.of(), 0, 0.0); // or throw if you prefer
+        }
+        BusiestReport report = parkingLotService.generateBusiestReport(topN);
+        log.info("Admin {} generated busiest report: topLots={}, busiestHour={}, avgUtil={}",
+                adminID,
+                report.topLots.size(),
+                report.busiestHourOfDay,
+                String.format("%.2f%%", report.busiestHourUtilization * 100));
+        return report;
+    }
 }
+
 
 
 
