@@ -9,6 +9,7 @@ public abstract class User {
     protected String userPassword;
     protected String userRole;
     protected boolean isLoggedIn = false;
+    public boolean isLoggedIn() { return isLoggedIn; }
     Scanner scanner = new Scanner(System.in);
 
     void login() {

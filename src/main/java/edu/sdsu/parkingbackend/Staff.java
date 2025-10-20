@@ -1,42 +1,51 @@
 package edu.sdsu.parkingbackend;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-@Component
 
-public class Staff extends User{
+@Component
+public class Staff extends User {
+
+    private static final Logger log = LoggerFactory.getLogger(Staff.class);
 
     private String staffID;
-    private String carInfo;
     private final ParkingLotService parkingLotService;
 
     public Staff(ParkingLotService parkingLotService) {
         this.parkingLotService = parkingLotService;
     }
 
-    public void setStaffInfo(String staffID, String carInfo) {
-        this.staffID = staffID;
-        this.carInfo = carInfo;
-    }
+    public void setStaffID(String staffID) { this.staffID = staffID; }
 
     public void viewLots() {
-        System.out.println("Parking Availability for Staff " + staffID + ":");
-        parkingLotService.findAll().forEach(lot -> {
-            System.out.println("Lot " + lot.lotID + " → " + lot.getStatus());
-        });
+        log.info("Staff {} viewing lots…", staffID);
+        parkingLotService.findAll().forEach(lot ->
+                log.info("Lot {} → {}", lot.lotID, lot.getStatus())
+        );
     }
 
     public boolean updateStatus(int lotId, int newOccupied) {
-        boolean success = parkingLotService.updateOccupied(lotId, newOccupied);
-
-        if (success) {
-            ParkingLot updatedLot = parkingLotService.findById(lotId);
-            System.out.println("Staff " + staffID + " updated Lot " + lotId + ":");
-            System.out.println("   Status: " + updatedLot.currentStatus);
-            System.out.println("   Available: " + (updatedLot.capacity - updatedLot.occupiedSpaces));
-        } else {
-            System.out.println("Update failed. Invalid lot ID or invalid occupied value.");
+        if (!isLoggedIn()) {
+            log.warn("Staff {} attempted update without login", staffID);
+            return false;
         }
+        boolean ok = parkingLotService.updateOccupied(lotId, newOccupied);
+        if (ok) {
+            var lot = parkingLotService.findById(lotId);
+            log.info("Staff {} updated Lot {} → occupied={}, status={}, available={}",
+                    staffID, lotId, lot.occupiedSpaces, lot.currentStatus, lot.getAvailability());
+        }
+        return ok;
+    }
 
-        return success;
+    public String getStatus(int lotId) {
+        var lot = parkingLotService.findById(lotId);
+        return (lot == null) ? "Lot " + lotId + " not found." : lot.getStatus();
+    }
+
+    public int getAvailability(int lotId) {
+        var lot = parkingLotService.findById(lotId);
+        return (lot == null) ? -1 : lot.getAvailability();
     }
 }

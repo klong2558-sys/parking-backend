@@ -37,6 +37,9 @@ public class ParkingLot {
         System.out.println(lotName + " is now " + currentStatus );
         return currentStatus;
     }
+    public int getAvailability() {
+        return Math.max(0, capacity - occupiedSpaces);
+    }
 
 
 }

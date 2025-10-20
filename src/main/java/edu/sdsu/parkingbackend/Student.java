@@ -1,9 +1,13 @@
 package edu.sdsu.parkingbackend;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-@Component
 
-public class Student extends User{
+@Component
+public class Student extends User {
+
+    private static final Logger log = LoggerFactory.getLogger(Student.class);
 
     private String studentID;
     private String carInfo;
@@ -19,26 +23,23 @@ public class Student extends User{
     }
 
     public void viewLots() {
-        System.out.println("Parking Availability for Student " + studentID + ":");
-        parkingLotService.findAll().forEach(lot -> {
-            System.out.println("Lot " + lot.lotID + " → " + lot.getStatus());
-        });
+        log.info("Student {} viewing lots…", studentID);
+        parkingLotService.findAll().forEach(lot ->
+                log.info("Lot {} → {}", lot.lotID, lot.getStatus())
+        );
     }
 
     public boolean updateStatus(int lotId, int newOccupied) {
-        boolean success = parkingLotService.updateOccupied(lotId, newOccupied);
-
-        if (success) {
-            ParkingLot updatedLot = parkingLotService.findById(lotId);
-            System.out.println("Student " + studentID + " updated Lot " + lotId + ":");
-            System.out.println("   Status: " + updatedLot.currentStatus);
-            System.out.println("   Available: " + (updatedLot.capacity - updatedLot.occupiedSpaces));
-        } else {
-            System.out.println("Update failed. Invalid lot ID or invalid occupied value.");
+        if (!isLoggedIn()) {
+            log.warn("Student {} attempted update without login", studentID);
+            return false;
         }
-
-        return success;
+        boolean ok = parkingLotService.updateOccupied(lotId, newOccupied);
+        if (!ok) return false;
+        ParkingLot lot = parkingLotService.findById(lotId);
+        log.info("Student {} updated Lot {} → occupied={}, status={}, available={}",
+                studentID, lotId, lot.occupiedSpaces, lot.currentStatus, lot.getAvailability());
+        return true;
     }
 }
-
 
