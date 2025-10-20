@@ -3,23 +3,23 @@ package edu.sdsu.parkingbackend;
 import org.springframework.stereotype.Component;
 @Component
 
-public class Student extends User{
+public class Staff extends User{
 
-    private String studentID;
+    private String staffID;
     private String carInfo;
     private final ParkingLotService parkingLotService;
 
-    public Student(ParkingLotService parkingLotService) {
+    public Staff(ParkingLotService parkingLotService) {
         this.parkingLotService = parkingLotService;
     }
 
-    public void setStudentInfo(String studentID, String carInfo) {
-        this.studentID = studentID;
+    public void setStaffInfo(String staffID, String carInfo) {
+        this.staffID = staffID;
         this.carInfo = carInfo;
     }
 
     public void viewLots() {
-        System.out.println("Parking Availability for Student " + studentID + ":");
+        System.out.println("Parking Availability for Staff " + staffID + ":");
         parkingLotService.findAll().forEach(lot -> {
             System.out.println("Lot " + lot.lotID + " → " + lot.getStatus());
         });
@@ -30,7 +30,7 @@ public class Student extends User{
 
         if (success) {
             ParkingLot updatedLot = parkingLotService.findById(lotId);
-            System.out.println("Student " + studentID + " updated Lot " + lotId + ":");
+            System.out.println("Staff " + staffID + " updated Lot " + lotId + ":");
             System.out.println("   Status: " + updatedLot.currentStatus);
             System.out.println("   Available: " + (updatedLot.capacity - updatedLot.occupiedSpaces));
         } else {
@@ -40,5 +40,3 @@ public class Student extends User{
         return success;
     }
 }
-
-
